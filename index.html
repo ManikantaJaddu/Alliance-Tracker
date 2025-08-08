@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>Alliance Tracker</title>
@@ -20,7 +21,7 @@
             const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
             const month = monthNames[now.getMonth()];
             const year = now.getFullYear();
-            const dateStr = ${day}-${month}-${year};
+            const dateStr = `${day}-${month}-${year}`;
 
             // Format time as HH:MM:SS
             const timeStr = now.toLocaleTimeString("en-GB");
@@ -34,7 +35,7 @@
             // Build Zoho Creator form URL
             const formUrl =
               "https://creatorapp.zohopublic.com/allianceproitpvtltd/emp-tracker/form-embed/GPS_Tracker/F1qTgmwUVO8PyCm5MO0QjpE1Qy6rg6MBAAym2fw1aXnZD8AzvzD1O5mVJUwN5wFMAet29ewsOX3j9CwgdvjXRDaH56fN8rk0ejt7" +
-              ?${latField}=${lat}&${lonField}=${lon}&${dateField}=${dateStr}&${timeField}=${timeStr};
+              `?${latField}=${lat}&${lonField}=${lon}&${dateField}=${dateStr}&${timeField}=${timeStr}`;
 
             // Load form with pre-filled values
             document.getElementById("zohoForm").src = formUrl;
@@ -51,14 +52,10 @@
     window.onload = fillLocationAndTime;
   </script>
 </head>
+
 <body>
-  <h2> Alliance Pro Employee Tracker</h2>
-  <iframe
-    id="zohoForm"
-    width="100%"
-    height="800"
-    frameborder="0"
-    allow="geolocation"
-  ></iframe>
+  <h2>Alliance Pro Employee Tracker</h2>
+  <iframe id="zohoForm" width="100%" height="800" frameborder="0" allow="geolocation"></iframe>
 </body>
+
 </html>
