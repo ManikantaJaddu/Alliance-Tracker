@@ -1,206 +1,228 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Alliance FMS</title>
-  <link rel="icon" type="image/png" href="alliance_icon.jpg">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Alliance GPS</title>
+    <link rel="icon" type="image/png" href="alliance_icon.jpg" />
 
-  <style>
-    :root {
-      --primary: #0b5ed7;
-      --accent: #f5a623;
-      --glass-bg: rgba(255, 255, 255, 0.55);
-      --glass-border: rgba(255, 255, 255, 0.35);
-      --shadow: 0 30px 60px rgba(0, 0, 0, 0.25);
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: "Inter", "Segoe UI", Tahoma, sans-serif;
-      min-height: 100vh;
-      padding: 30px;
-
-      background: linear-gradient(135deg, #b4cff3, #f7d79d, #b4cff3);
-      background-size: 400% 400%;
-      animation: bgFlow 18s ease infinite;
-
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    @keyframes bgFlow {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    /* ===== Header ===== */
-    .brand-title {
-      font-size: 2.4rem;
-      font-weight: 800;
-      letter-spacing: 1px;
-      margin-bottom: 24px;
-      text-align: center;
-      animation: fadeDown 0.9s ease;
-    }
-
-    .brand-title .alliance {
-      color: var(--primary);
-    }
-
-    .brand-title .fms {
-      color: var(--accent);
-    }
-
-    @keyframes fadeDown {
-      from {
-        opacity: 0;
-        transform: translateY(-20px);
+    <style>
+      :root {
+        --primary: #0b5ed7;
+        --accent: #f5a623;
+        --shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
       }
-      to {
-        opacity: 1;
-        transform: translateY(0);
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
-    }
 
-    /* ===== Glass Card ===== */
-    .app-shell {
-      width: 100%;
-      max-width: 900px;
-      padding: 22px;
-      border-radius: 22px;
-
-      background: var(--glass-bg);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-
-      border: 1px solid var(--glass-border);
-      box-shadow: var(--shadow);
-
-      animation: fadeIn 1.1s ease;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(15px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* ===== Iframe ===== */
-    iframe {
-      width: 100%;
-      height: 560px;
-      border: none;
-      border-radius: 16px;
-      background: #fff;
-      transition: transform 0.35s ease, box-shadow 0.35s ease;
-    }
-
-    iframe:hover {
-      transform: scale(1.015);
-      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-    }
-
-    /* ===== Footer Hint ===== */
-    .hint {
-      margin-top: 12px;
-      font-size: 0.85rem;
-      color: rgba(0, 0, 0, 0.6);
-      text-align: center;
-    }
-
-    /* ===== Mobile ===== */
-    @media (max-width: 768px) {
+      html,
       body {
-        padding: 18px;
+        height: 100%;
+        margin: 0;
+        overflow: hidden; /* 🔥 removes scrollbar */
       }
 
-      .brand-title {
-        font-size: 1.9rem;
+      body {
+        font-family: "Inter", "Segoe UI", Tahoma, sans-serif;
+
+        background: linear-gradient(135deg, #b4cff3, #f7d79d, #b4cff3);
+        background-size: 400% 400%;
+        animation: bgFlow 18s ease infinite;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center; /* center vertically */
       }
 
-      iframe {
-        height: 620px;
-      }
-    }
-  </style>
-
-  <script>
-    async function fillLocationAndTime() {
-      if (!navigator.geolocation) {
-        alert("Geolocation is not supported by this browser.");
-        return;
-      }
-
-      navigator.geolocation.getCurrentPosition(
-        async function (position) {
-          const lat = Number(position.coords.latitude.toFixed(6));
-          const lon = Number(position.coords.longitude.toFixed(6));
-
-          const now = new Date();
-          const day = String(now.getDate()).padStart(2, "0");
-          const monthNames = [
-            "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-          ];
-          const month = monthNames[now.getMonth()];
-          const year = now.getFullYear();
-          const dateStr = `${day}-${month}-${year}`;
-          const timeStr = now.toLocaleTimeString("en-GB");
-
-          let mapAddress = "Unknown Location";
-          try {
-            const response = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`
-            );
-            const data = await response.json();
-            if (data && data.display_name) {
-              mapAddress = data.display_name;
-            }
-          } catch (err) {
-            console.error("Address fetch failed", err);
-          }
-
-          const formUrl =
-            "https://creatorapp.zohopublic.com/allianceproitpvtltd/emp-tracker/form-embed/Alliance_FMS/HqXfJp29XhBUtgWgse7zTBOAFgXO2AUAAYYBmnevJhaNx7uaqXQnKz5mF4uyFNsH52hgsEHhUUJpVtXtFzNYPbY9N5ez2EXgjGq8" +
-            "?hideHeader=true" +
-            `&GPS_Lat=${lat}` +
-            `&GPS_Long=${lon}` +
-            `&GPS_Date=${encodeURIComponent(dateStr)}` +
-            `&GPS_Time=${encodeURIComponent(timeStr)}` +
-            `&Map_Address=${encodeURIComponent(mapAddress)}`;
-
-          document.getElementById("zohoForm").src = formUrl;
-        },
-        function (error) {
-          alert("❌ Error getting location: " + error.message);
+      @keyframes bgFlow {
+        0% {
+          background-position: 0% 50%;
         }
-      );
-    }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
 
-    window.onload = fillLocationAndTime;
-  </script>
-</head>
+      /* ===== Logo ===== */
+      .logo {
+        width: 220px;
+        max-width: 80%;
+        margin-bottom: 20px;
+        animation: fadeDown 0.9s ease;
+      }
 
-<body>
-  <h2 class="brand-title">
-    <span class="alliance">ALLIANCE</span>
-    <span class="fms">FMS</span>
-  </h2>
+      @keyframes fadeDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
-  <div class="app-shell">
-    <iframe id="zohoForm" allow="geolocation"></iframe>
-    <div class="hint">🔒 Secure • 📍 Auto-location enabled • ⏱ Real-time tracking</div>
-  </div>
-</body>
+      /* ===== Card ===== */
+      .app-shell {
+        width: 100%;
+        max-width: 900px;
+        padding: 18px 18px 10px 18px;
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        box-shadow: var(--shadow);
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(15px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* ===== Iframe ===== */
+      iframe {
+        width: 100%;
+        min-height: 500px;
+        border: none;
+        border-radius: 16px;
+        background: #fff;
+        display: block;
+      }
+
+      /* ===== Footer Hint ===== */
+      .hint {
+        font-size: 0.85rem;
+        color: rgba(0, 0, 0, 0.6);
+        text-align: center;
+      }
+
+      /* ===== Mobile ===== */
+      @media (max-width: 768px) {
+        body {
+          padding: 15px;
+        }
+
+        iframe {
+          height: 620px;
+        }
+
+        .logo {
+          width: 180px;
+        }
+      }
+    </style>
+
+    <script>
+      let currentLat = null;
+      let currentLon = null;
+      let currentAddress = "Fetching location...";
+      let formInitialized = false;
+
+      function startLocationTracking() {
+        if (!navigator.geolocation) {
+          alert("Geolocation not supported.");
+          return;
+        }
+
+        navigator.geolocation.watchPosition(
+          async function (position) {
+            currentLat = Number(position.coords.latitude.toFixed(6));
+            currentLon = Number(position.coords.longitude.toFixed(6));
+
+            try {
+              const response = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${currentLat}&lon=${currentLon}`,
+              );
+              const data = await response.json();
+              if (data && data.display_name) {
+                currentAddress = data.display_name;
+              }
+            } catch (err) {
+              console.log("Address fetch failed");
+            }
+
+            // Load form first time immediately
+            if (!formInitialized) {
+              updateForm();
+              formInitialized = true;
+            }
+          },
+          function (error) {
+            console.error("Location error:", error.message);
+          },
+          {
+            enableHighAccuracy: true,
+            maximumAge: 0,
+            timeout: 10000,
+          },
+        );
+      }
+
+      function updateForm() {
+        if (!currentLat || !currentLon) return;
+
+        const now = new Date();
+        const day = String(now.getDate()).padStart(2, "0");
+        const monthNames = [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec",
+        ];
+        const month = monthNames[now.getMonth()];
+        const year = now.getFullYear();
+        const dateStr = `${day}-${month}-${year}`;
+        const timeStr = now.toLocaleTimeString("en-GB");
+
+        const formUrl =
+          "https://creatorapp.zohopublic.com/allianceproitpvtltd/emp-tracker/form-embed/Alliance_FMS/HqXfJp29XhBUtgWgse7zTBOAFgXO2AUAAYYBmnevJhaNx7uaqXQnKz5mF4uyFNsH52hgsEHhUUJpVtXtFzNYPbY9N5ez2EXgjGq8" +
+          "?hideHeader=true" +
+          "&zc_Header=false" +
+          `&GPS_Lat=${currentLat}` +
+          `&GPS_Long=${currentLon}` +
+          `&GPS_Date=${encodeURIComponent(dateStr)}` +
+          `&GPS_Time=${encodeURIComponent(timeStr)}` +
+          `&Map_Address=${encodeURIComponent(currentAddress)}`;
+
+        document.getElementById("zohoForm").src = formUrl;
+      }
+
+      window.onload = function () {
+        startLocationTracking(); // Ask permission once
+        setInterval(updateForm, 30000); // Update every 30 sec
+      };
+    </script>
+  </head>
+
+  <body>
+    <!-- ✅ LOGO IMAGE -->
+    <img src="alliance_logo.png" alt="Alliance FMS Logo" class="logo" />
+
+    <div class="app-shell">
+      <iframe id="zohoForm" allow="geolocation"></iframe>
+      <div class="hint">
+        🔒 Secure • 📍 Auto-location enabled • ⏱ Real-time tracking
+      </div>
+    </div>
+  </body>
 </html>
